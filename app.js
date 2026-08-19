@@ -1,5 +1,5 @@
 // Configuration
-const ADMIN_PASSWORD = 'admin123'; // À changer !
+const ADMIN_PASSWORD = '@pCus26{#@-_#'; // À changer !
 const STORAGE_KEY = 'restaurantReviews';
 const PENDING_KEY = 'pendingReviews';
 
