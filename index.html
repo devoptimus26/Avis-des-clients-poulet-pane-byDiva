@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avis des Clients - Restaurant</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🍽️ Avis des Clients</h1>
+            <p class="subtitle">Partagez votre expérience culinaire avec nous</p>
+        </header>
+
+        <!-- Formulaire d'évaluation -->
+        <section class="form-section">
+            <h2>Donnez votre avis</h2>
+            <form id="reviewForm" class="review-form">
+                <div class="form-group">
+                    <label for="name">Nom *</label>
+                    <input type="text" id="name" name="name" required placeholder="Votre nom">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required placeholder="votre@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="rating">Note sur 5 *</label>
+                    <div class="rating-input">
+                        <input type="radio" id="star5" name="rating" value="5" required>
+                        <label for="star5" class="star">★</label>
+                        
+                        <input type="radio" id="star4" name="rating" value="4">
+                        <label for="star4" class="star">★</label>
+                        
+                        <input type="radio" id="star3" name="rating" value="3">
+                        <label for="star3" class="star">★</label>
+                        
+                        <input type="radio" id="star2" name="rating" value="2">
+                        <label for="star2" class="star">★</label>
+                        
+                        <input type="radio" id="star1" name="rating" value="1">
+                        <label for="star1" class="star">★</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="comment">Commentaire *</label>
+                    <textarea id="comment" name="comment" required placeholder="Partagez votre expérience..." rows="5"></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Soumettre mon avis</button>
+            </form>
+            <div id="formMessage" class="message"></div>
+        </section>
+
+        <!-- Section d'affichage des avis -->
+        <section class="reviews-section">
+            <div class="reviews-header">
+                <h2>Avis des Clients</h2>
+                <div class="filter-section">
+                    <label for="filterRating">Filtrer par note :</label>
+                    <select id="filterRating">
+                        <option value="">Tous les avis</option>
+                        <option value="5">⭐⭐⭐⭐⭐ (5 étoiles)</option>
+                        <option value="4">⭐⭐⭐⭐ (4 étoiles)</option>
+                        <option value="3">⭐⭐⭐ (3 étoiles)</option>
+                        <option value="2">⭐⭐ (2 étoiles)</option>
+                        <option value="1">⭐ (1 étoile)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="reviewsList" class="reviews-list">
+                <p class="no-reviews">Aucun avis pour le moment. Soyez le premier à partager votre expérience !</p>
+            </div>
+        </section>
+
+        <!-- Section Modération (Admin) -->
+        <section class="admin-section">
+            <h2>🔐 Panneau d'Administration</h2>
+            <div class="admin-login">
+                <input type="password" id="adminPassword" placeholder="Mot de passe administrateur">
+                <button onclick="loginAdmin()" class="btn-admin">Accès Admin</button>
+            </div>
+            <div id="adminPanel" class="admin-panel hidden">
+                <h3>Gestion des Avis</h3>
+                <div id="pendingReviews" class="pending-reviews">
+                    <p>Aucun avis en attente de modération</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Restaurant. Tous droits réservés.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
