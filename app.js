@@ -19,20 +19,26 @@ const pendingReviews = document.getElementById('pendingReviews');
 
 // Event listeners
 function setupEventListeners() {
-    reviewForm.addEventListener('submit', handleFormSubmit);
-    filterRating.addEventListener('change', filterReviews);
+    if (reviewForm) reviewForm.addEventListener('submit', handleFormSubmit);
+    if (filterRating) filterRating.addEventListener('change', filterReviews);
 }
 
 // Traiter la soumission du formulaire
 function handleFormSubmit(e) {
     e.preventDefault();
 
+    const form = reviewForm || document.getElementById('reviewForm');
+
+    // Récupérer la note sélectionnée (radio)
+    const ratingEl = form ? form.querySelector('input[name="rating"]:checked') : document.querySelector('input[name="rating"]:checked');
+    const ratingValue = ratingEl ? ratingEl.value : '';
+
     const review = {
         id: Date.now(),
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        rating: document.getElementById('rating').value,
-        comment: document.getElementById('comment').value,
+        name: form?.elements['name']?.value || '',
+        email: form?.elements['email']?.value || '',
+        rating: ratingValue,
+        comment: form?.elements['comment']?.value || '',
         date: new Date().toLocaleDateString('fr-FR'),
         status: 'pending', // pending, approved, rejected
         timestamp: new Date().toISOString()
@@ -45,7 +51,7 @@ function handleFormSubmit(e) {
     showMessage('Merci ! Votre avis a été reçu et sera publié après modération.', 'success');
 
     // Réinitialiser le formulaire
-    reviewForm.reset();
+    if (form) form.reset();
 
     // Actualiser la liste des avis
     loadReviews();
@@ -95,7 +101,7 @@ function displayReviews(reviews) {
 
 // Filtrer les avis par note
 function filterReviews() {
-    const rating = filterRating.value;
+    const rating = filterRating?.value || '';
     let reviews = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
     if (rating) {
@@ -107,6 +113,7 @@ function filterReviews() {
 
 // Afficher les messages
 function showMessage(text, type) {
+    if (!formMessage) return;
     formMessage.textContent = text;
     formMessage.className = `message ${type}`;
 
@@ -134,11 +141,12 @@ function updateAdminPanel() {
     const pending = JSON.parse(localStorage.getItem(PENDING_KEY)) || [];
 
     if (pending.length === 0) {
-        pendingReviews.innerHTML = '<p>Aucun avis en attente de modération</p>';
+        if (pendingReviews) pendingReviews.innerHTML = '<p>Aucun avis en attente de modération</p>';
         return;
     }
 
-    pendingReviews.innerHTML = pending.map(review => `
+    if (pendingReviews) {
+        pendingReviews.innerHTML = pending.map(review => `
         <div class="review-card pending">
             <div class="review-header">
                 <div>
@@ -156,6 +164,7 @@ function updateAdminPanel() {
             </div>
         </div>
     `).join('');
+    }
 }
 
 // Approuver un avis
@@ -202,6 +211,7 @@ function deleteReview(id) {
 
 // Échapper les caractères HTML (sécurité)
 function escapeHtml(text) {
+    const s = String(text || '');
     const map = {
         '&': '&amp;',
         '<': '&lt;',
@@ -209,7 +219,7 @@ function escapeHtml(text) {
         '"': '&quot;',
         "'": '&#039;'
     };
-    return text.replace(/[&<>"']/g, m => map[m]);
+    return s.replace(/[&<>"']/g, m => map[m]);
 }
 
 // Exporter les données (pour sauvegarde)
