@@ -1,7 +1,7 @@
 // Configuration
-const ADMIN_PASSWORD = '@pCus26{#@-_#'; // À changer !
 const STORAGE_KEY = 'restaurantReviews';
 const PENDING_KEY = 'pendingReviews';
+const ADMIN_PASSWORD_KEY = 'adminPassword'; // stored locally (set by owner via prompt)
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', function() {
@@ -81,11 +81,12 @@ function loadReviews() {
 // Afficher les avis
 function displayReviews(reviews) {
     if (reviews.length === 0) {
-        reviewsList.innerHTML = '<p class="no-reviews">Aucun avis pour le moment. Soyez le premier à partager votre expérience !</p>';
+        if (reviewsList) reviewsList.innerHTML = '<p class="no-reviews">Aucun avis pour le moment. Soyez le premier à partager votre expérience !</p>';
         return;
     }
 
-    reviewsList.innerHTML = reviews.map(review => `
+    if (reviewsList) {
+        reviewsList.innerHTML = reviews.map(review => `
         <div class="review-card approved">
             <div class="review-header">
                 <div>
@@ -97,6 +98,7 @@ function displayReviews(reviews) {
             <div class="review-comment">${escapeHtml(review.comment)}</div>
         </div>
     `).join('');
+    }
 }
 
 // Filtrer les avis par note
@@ -123,13 +125,38 @@ function showMessage(text, type) {
     }, 5000);
 }
 
+// Admin password helpers (stored locally to avoid hardcoding in repo)
+function hasAdminPassword() {
+    return !!localStorage.getItem(ADMIN_PASSWORD_KEY);
+}
+
+function setAdminPassword(password) {
+    localStorage.setItem(ADMIN_PASSWORD_KEY, password);
+}
+
+function checkAdminPassword(password) {
+    return localStorage.getItem(ADMIN_PASSWORD_KEY) === password;
+}
+
 // Connexion Admin
 function loginAdmin() {
-    const password = document.getElementById('adminPassword').value;
+    // If no password set yet, prompt the owner to create one (this stores locally in the browser)
+    if (!hasAdminPassword()) {
+        const p1 = prompt('Aucun mot de passe administrateur trouvé. Créez un mot de passe administrateur :');
+        if (!p1) return alert('Mot de passe non défini.');
+        const p2 = prompt('Confirmez le mot de passe :');
+        if (p1 !== p2) return alert('Les mots de passe ne correspondent pas.');
+        setAdminPassword(p1);
+        alert('Mot de passe administrateur défini localement dans votre navigateur.');
+    }
 
-    if (password === ADMIN_PASSWORD) {
-        adminPanel.classList.remove('hidden');
-        document.getElementById('adminPassword').value = '';
+    const password = prompt('Entrez le mot de passe administrateur :');
+    if (password === null) return; // canceled
+
+    if (checkAdminPassword(password)) {
+        if (adminPanel) adminPanel.classList.remove('hidden');
+        const pwdInput = document.getElementById('adminPassword');
+        if (pwdInput) pwdInput.value = '';
         updateAdminPanel();
     } else {
         alert('Mot de passe incorrect');
